@@ -5,5 +5,4 @@
 .DS_Store
 */.DS_Store
 *.Rproj
-.Rbuildignore
 docs
