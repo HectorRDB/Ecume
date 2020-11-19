@@ -44,8 +44,7 @@
 #' }
 #' @export
 #' @importFrom dplyr bind_rows n_distinct
-#' @import stats
-#' @import caret
+#' @import stats caret e1071
 classifier_test <- function(x, y, split = .7, thresh = 0,
                             method = "knn",
                             control = caret::trainControl(method = "cv"),
