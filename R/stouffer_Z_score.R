@@ -25,7 +25,7 @@
 #' }
 #' @export
 #'
-stouffer_zscore <- function(pvals, weights) {
+stouffer_zscore <- function(pvals, weights = rep(1, seq_along(pvals))) {
   if(length(pvals) != length(weights)) {
     stop("pvals and weights must have the same length")
   }

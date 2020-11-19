@@ -10,12 +10,12 @@
     m <- m - 1
   }
   m2 <- ceiling(m / 2)
-  kxx <- rbf(x[1:m2,], x[(m2 + 1):m], g)
-  kyy <- rbf(y[1:m2], y[(m2 + 1):m], g)
-  kxy <- rbf(x[1:m2], y[(m2 + 1):m], g)
-  kyx <- rbf(y[1:m2], x[(m2 + 1):m], g)
+  kxx <- .rbf(x[1:m2,], x[(m2 + 1):m], g)
+  kyy <- .rbf(y[1:m2], y[(m2 + 1):m], g)
+  kxy <- .rbf(x[1:m2], y[(m2 + 1):m], g)
+  kyx <- .rbf(y[1:m2], x[(m2 + 1):m], g)
   res <- kxx + kyy - kxy - kyx
-  return(list("mean" = mean(res), "variance" = var(res) / m2))
+  return(list("mean" = mean(res), "variance" = stats::var(res) / m2))
 }
 
 .choose_g <- function(x, y) {

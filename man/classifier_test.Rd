@@ -20,9 +20,13 @@ from k distribution}
 
 \item{y}{Samples from the second distribution. Only used if x is a vector.}
 
-\item{...}{Other parameters passed to \link{caret}}
+\item{split}{How to split the data between training and test. Default to .7}
 
-\item{model}{Which model(s) to use during training. Default to knn.}
+\item{thresh}{Value to add to the null hypothesis. See details.}
+
+\item{method}{Which model(s) to use during training. Default to knn.}
+
+\item{...}{Other parameters passed to \link{caret}}
 }
 \value{
 A list containing the following components:

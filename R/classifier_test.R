@@ -17,8 +17,12 @@
 #' @param x Samples from the first distribution or a list of samples
 #' from k distribution
 #' @param y Samples from the second distribution. Only used if x is a vector.
-#' @param model Which model(s) to use during training. Default to knn.
-#' @param ... Other parameters passed to \link{caret}
+#' @param split How to split the data between training and test. Default to .7
+#' @param thresh Value to add to the null hypothesis. See details.
+#' @param method Which model(s) to use during training. Default to knn.
+#' @param control Control parameters when fitting the methods.
+#' See \link{caret::trainControl}
+#' @param ... Other parameters passed to \link{caret::train}
 #' @examples
 #'  x <- matrix(c(runif(100, 0, 1),
 #'                runif(100, -1, 1)),
@@ -38,6 +42,7 @@
 #' }
 #' @export
 #' @importFrom dplyr bind_rows n_distinct
+#' @import stats
 #' @import caret
 classifier_test <- function(x, y, split = .7, thresh = 0,
                             method = "knn",
@@ -45,15 +50,15 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
                             ...) {
   if ("list" %in% is(x)) {
     .check_d(x)
-    names(x) <- seq_along(x)
+    names(x) <- paste0("C", seq_along(x))
     x <- lapply(x, as.data.frame)
     X <- dplyr::bind_rows(x, .id = "type")
     X$type <- as.factor(X$type)
   } else {
     .check_d(x, y)
     X <- dplyr::bind_rows(
-      "1" = as.data.frame(x),
-      "2" = as.data.frame(y),
+      "C1" = as.data.frame(x),
+      "C2" = as.data.frame(y),
       .id = "type"
     )
     X$type <- as.factor(X$type)
@@ -62,15 +67,16 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
   ref <- caret::train(type ~ .,
                       data = X[training_set$Resample1, ],
                       method = method,
-                      metric = "ROC",
-                      trControl = control)
+                      metric = "Accuracy",
+                      trControl = control,
+                      ...)
   test_res <- caret::predict.train(ref, newdata = X[-training_set$Resample1, ])
   accuracy <- sum(test_res == X[-training_set$Resample1, "type"])
   p_hat <- mean(test_res == X[-training_set$Resample1, "type"])
   min_accuracy <- max(table(X$type)) / nrow(X)
-  pval <- pbinom(accuracy - thresh,
-                 size = length(test_res),
-                 prob = min_accuracy,
-                 lower.tail = FALSE)
+  pval <- stats::pbinom(accuracy - thresh,
+                        size = length(test_res),
+                        prob = min_accuracy,
+                        lower.tail = FALSE)
   return(list("statistic" = p_hat, "p.value" = pval))
 }
