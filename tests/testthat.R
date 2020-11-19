@@ -1,3 +1,3 @@
-library(statUtils)
+library(Ecume)
 library(testthat)
-test_check("statUtils")
+test_check("Ecume")

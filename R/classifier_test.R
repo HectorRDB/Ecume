@@ -32,8 +32,10 @@
 #'              ncol = 2)
 #'  classifier_test(x, y)
 #' @details
-#' aa
+#' See Lopez-Paz et .al for more background on those tests.
 #' @md
+#' @references
+#' Lopez-Paz, D., & Oquab, M. (2016). Revisiting Classifier Two-Sample Tests, 1–15. Retrieved from http://arxiv.org/abs/1610.06545
 #' @return
 #' A list containing the following components:
 #' \itemize{
