@@ -17,7 +17,8 @@ Imports:
     magrittr,
     caret,
     dplyr,
-    e1071
+    e1071,
+    methods
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
