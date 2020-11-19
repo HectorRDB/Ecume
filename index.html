@@ -61,6 +61,19 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#r-package-ecume" class="anchor"></a>R package: Ecume</h1></div>
 <p>This package implemements (or re-implements in <code>R</code>) a variety of statistical tools used to do non-parametric two-sample (or k-sample) distribution comparisons in the univariate or multivariate case.</p>
+<p>If you want to suggest a new test or a variant, open an <a href="https://github.com/HectorRDB/Ecume/issues">issue</a>.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>To install the current version of <em>Ecume</em>, run.</p>
+<pre><code>if(!requireNamespace("BiocManager", quietly = TRUE)) {
+ install.packages("BiocManager") 
+}
+BiocManager::install("Ecume")</code></pre>
+<p>To install the development version in <code>R</code>, run</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"HectoRDB/Ecume"</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
 
   </div>
@@ -84,7 +97,7 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/HectorRDB/statUtils/actions"><img src="https://github.com/HectorRDB/Ecume/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/HectorRDB/Ecume?branch=master"><img src="https://codecov.io/gh/HectorRDB/Ecume/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://codecov.io/gh/HectorRDB/Ecume?branch=main"><img src="https://codecov.io/gh/HectorRDB/Ecume/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 </div>
