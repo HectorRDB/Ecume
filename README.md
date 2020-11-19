@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![R build status](https://github.com/HectorRDB/statUtils/workflows/R-CMD-check/badge.svg)](https://github.com/HectorRDB/statUtils/actions)
+<!-- badges: end -->
+  
 # R package: Ecume
 
   
