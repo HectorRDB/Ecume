@@ -4,6 +4,8 @@
 #'
 #' @param pvals A vector of p-values
 #' @param weights A vector of weights
+#' @param side How the p-values were generated. One of 'right',
+#' 'left' or 'two'.
 #' @examples
 #'  pvals <- runif(100, 0, 1)
 #'  weights <- runif(100, 0, 1)
@@ -25,12 +27,19 @@
 #' }
 #' @export
 #'
-stouffer_zscore <- function(pvals, weights = rep(1, seq_along(pvals))) {
+stouffer_zscore <- function(pvals, weights = rep(1, seq_along(pvals)),
+                            side = "two") {
   if(length(pvals) != length(weights)) {
     stop("pvals and weights must have the same length")
   }
+  if (!side %in% c('left', 'right', 'two')) stop("wrong side argument")
+  if (side == 'left') {
+    pvals <- 1 - pvals
+  } else if (side == 'two') {
+    pvals <- pvals / 2
+  }
   Zs <- lapply(pvals, function(pval) {
-    return(stats::qnorm(pval / 2, lower.tail = FALSE))
+    return(stats::qnorm(pval, lower.tail = FALSE))
   }) %>%
     unlist()
   Z <- sum(Zs * weights) / sqrt(sum(weights^2))

@@ -4,12 +4,15 @@
 \alias{stouffer_zscore}
 \title{Stouffer}
 \usage{
-stouffer_zscore(pvals, weights)
+stouffer_zscore(pvals, weights = rep(1, seq_along(pvals)), side = "two")
 }
 \arguments{
 \item{pvals}{A vector of p-values}
 
 \item{weights}{A vector of weights}
+
+\item{side}{How the p-values were generated. One of 'right',
+'left' or 'two'.}
 }
 \value{
 A list containing the following components:
