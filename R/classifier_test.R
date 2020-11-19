@@ -44,12 +44,13 @@
 #' }
 #' @export
 #' @importFrom dplyr bind_rows n_distinct
+#' @importFrom methods is
 #' @import stats caret e1071
 classifier_test <- function(x, y, split = .7, thresh = 0,
                             method = "knn",
                             control = caret::trainControl(method = "cv"),
                             ...) {
-  if ("list" %in% is(x)) {
+  if ("list" %in% methods::is(x)) {
     .check_d(x)
     names(x) <- paste0("C", seq_along(x))
     x <- lapply(x, as.data.frame)
