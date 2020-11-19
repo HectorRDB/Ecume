@@ -1,6 +1,6 @@
 <!-- badges: start -->
 [![R build status](https://github.com/HectorRDB/Ecume/workflows/R-CMD-check/badge.svg)](https://github.com/HectorRDB/Ecume/actions)
-[![Codecov test coverage](https://codecov.io/gh/HectorRDB/Ecume/branch/master/graph/badge.svg)](https://codecov.io/gh/HectorRDB/Ecume?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/HectorRDB/Ecume/branch/main/graph/badge.svg)](https://codecov.io/gh/HectorRDB/Ecume?branch=main)
 <!-- badges: end -->
   
 # R package: Ecume
