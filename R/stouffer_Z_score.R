@@ -26,6 +26,9 @@
 #' @export
 #'
 stouffer_zscore <- function(pvals, weights) {
+  if(length(pvals) != length(weights)) {
+    stop("pvals and weights must have the same length")
+  }
   Zs <- lapply(pvals, function(pval) {
     return(stats::qnorm(pval / 2, lower.tail = FALSE))
   }) %>%

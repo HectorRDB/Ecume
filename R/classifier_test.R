@@ -1,0 +1,74 @@
+.check_d <- function(x, y = NULL) {
+  if (is.null(y)) {
+    check <- dplyr::n_distinct(lapply(x, ncol) %>% unlist)
+    check <- check == 1
+  } else {
+    check <- ncol(x) == ncol(y)
+  }
+  if (!check) {
+    stop("All distributions must have the same dimensions")
+  }
+}
+
+#' Classifier k-sample test
+#'
+#' @description Classifier k-sample test
+#'
+#' @param x Samples from the first distribution or a list of samples
+#' from k distribution
+#' @param y Samples from the second distribution. Only used if x is a vector.
+#' @param model Which model(s) to use during training. Default to knn.
+#' @param ... Other parameters passed to \link{caret}
+#' @examples
+#'  x <- matrix(c(runif(100, 0, 1),
+#'                runif(100, -1, 1)),
+#'              ncol = 2)
+#'  y <- matrix(c(runif(100, 0, 3),
+#'                runif(100, -1, 1)),
+#'              ncol = 2)
+#'  classifier_test(x, y)
+#' @details
+#' aa
+#' @md
+#' @return
+#' A list containing the following components:
+#' \itemize{
+#'   \item *statistic* the value of the test statistic.
+#'   \item *p.value* the p-value of the test.
+#' }
+#' @export
+#' @importFrom dplyr bind_rows n_distinct
+#' @import caret
+classifier_test <- function(x, y, split = .7, thresh = 0,
+                            method = "knn",
+                            control = caret::trainControl(method = "cv"),
+                            ...) {
+  if ("list" %in% is(x)) {
+    .check_d(x)
+    names(x) <- seq_along(x)
+    x <- lapply(x, as.data.frame)
+    X <- dplyr::bind_rows(x, .id = "type")
+    X$type <- as.factor(X$type)
+  } else {
+    .check_d(x, y)
+    X <- dplyr::bind_rows(
+      "1" = as.data.frame(x),
+      "2" = as.data.frame(y),
+      .id = "type"
+    )
+    X$type <- as.factor(X$type)
+  }
+  training_set <- createDataPartition(X$type, p = split)
+  ref <- caret::train(type ~ .,
+                      data = X[training_set$Resample1, ],
+                      method = method,
+                      metric = "Accuracy",
+                      trControl = control)
+  test_res <- caret::predict.train(ref, newdata = X[-training_set$Resample1, ])
+  accuracy <- sum(test_res == X[-training_set$Resample1, "type"])
+  p_hat <- mean(test_res == X[-training_set$Resample1, "type"])
+  pval <- pbinom(accuracy, size = length(test_res),
+                 prob = 1 / (nlevels(X$type)) + thresh,
+                 lower.tail = FALSE)
+  return(list("statistic" = p_hat, "p.value" = pval))
+}
