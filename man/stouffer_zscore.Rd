@@ -22,7 +22,11 @@ A list containing the following components:
 Stouffer's Z-score method
 }
 \details{
+Given a set of i.i.d p-values and associated weights, it combines the
+p-values \eqn{p_i}. Letting \eqn{\phi} be the standard normal cumulative distribution function
+and \eqn{Z_i =\phi^{-1} (1-p_i)}, the meta-analysis Z-score is
 
+\deqn{Z = (\sum w_i Z_i) * (\sum (w_i)^2)^(-1/2)}
 }
 \examples{
  pvals <- runif(100, 0, 1)

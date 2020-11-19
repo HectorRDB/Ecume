@@ -62,13 +62,15 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
   ref <- caret::train(type ~ .,
                       data = X[training_set$Resample1, ],
                       method = method,
-                      metric = "Accuracy",
+                      metric = "ROC",
                       trControl = control)
   test_res <- caret::predict.train(ref, newdata = X[-training_set$Resample1, ])
   accuracy <- sum(test_res == X[-training_set$Resample1, "type"])
   p_hat <- mean(test_res == X[-training_set$Resample1, "type"])
-  pval <- pbinom(accuracy, size = length(test_res),
-                 prob = 1 / (nlevels(X$type)) + thresh,
+  min_accuracy <- max(table(X$type)) / nrow(X)
+  pval <- pbinom(accuracy - thresh,
+                 size = length(test_res),
+                 prob = min_accuracy,
                  lower.tail = FALSE)
   return(list("statistic" = p_hat, "p.value" = pval))
 }
