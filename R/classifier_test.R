@@ -21,8 +21,8 @@
 #' @param thresh Value to add to the null hypothesis. See details.
 #' @param method Which model(s) to use during training. Default to knn.
 #' @param control Control parameters when fitting the methods.
-#' See \link{caret::trainControl}
-#' @param ... Other parameters passed to \link{caret::train}
+#' See \link[caret]{trainControl}
+#' @param ... Other parameters passed to \link[caret]{train}
 #' @examples
 #'  x <- matrix(c(runif(100, 0, 1),
 #'                runif(100, -1, 1)),

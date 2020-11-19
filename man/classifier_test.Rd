@@ -27,9 +27,9 @@ from k distribution}
 \item{method}{Which model(s) to use during training. Default to knn.}
 
 \item{control}{Control parameters when fitting the methods.
-See \link{caret::trainControl}}
+See \link[caret]{trainControl}}
 
-\item{...}{Other parameters passed to \link{caret::train}}
+\item{...}{Other parameters passed to \link[caret]{train}}
 }
 \value{
 A list containing the following components:
