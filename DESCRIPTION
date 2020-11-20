@@ -18,7 +18,9 @@ Imports:
     caret,
     dplyr,
     e1071,
-    methods
+    methods,
+    reticulate,
+    basilisk
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,

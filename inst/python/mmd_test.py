@@ -1,5 +1,4 @@
 import numpy as np
-import math
 from sklearn.metrics import pairwise_kernels
 
 def MMD2u(K, m, n):
@@ -29,7 +28,7 @@ def compute_null_distribution(K, m, n, iterations = 10000, random_state = None):
   return mmd2u_null
 
 def kernel_two_sample_test(X, Y, kernel_function = 'rbf', iterations = 10000,
-                           verbose = False, random_state = None, **kwargs):
+                           random_state = None, **kwargs):
   """Compute MMD^2_u, its null distribution and the p-value of the
     kernel two-sample test.
     Note that extra parameters captured by **kwargs will be passed to
@@ -43,9 +42,6 @@ def kernel_two_sample_test(X, Y, kernel_function = 'rbf', iterations = 10000,
   XY = np.vstack([X, Y])
   K = pairwise_kernels(XY, metric = kernel_function, **kwargs)
   mmd2u = MMD2u(K, m, n)
-  if verbose:
-    print("MMD^2_u = %s" % mmd2u)
-  print("Computing the null distribution.")
   
   mmd2u_null = compute_null_distribution(K, m, n, iterations,
                                          random_state = random_state)
