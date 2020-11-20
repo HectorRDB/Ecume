@@ -19,8 +19,7 @@ Imports:
     dplyr,
     e1071,
     methods,
-    reticulate,
-    basilisk
+    reticulate
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,

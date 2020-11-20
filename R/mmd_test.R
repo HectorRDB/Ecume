@@ -32,9 +32,11 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #' @param kernel_function A character that must match a known kernel. See details.
 #' @param ... Further arguments passed to kernel functions
 #' @examples
-#'  x <- rnorm(1000, 0, 1)
-#'  y <- rnorm(1000, 0, 2)
-#'  mmd_test(x, y)
+#'  if (reticulate::py_module_available("sklearn")) {
+#'    x <- rnorm(1000, 0, 1)
+#'    y <- rnorm(1000, 0, 2)
+#'    mmd_test(x, y)
+#'  }
 #' \dontrun{
 #'  sklrn <- reticulate::import("sklearn.metrics")
 #'  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
@@ -54,7 +56,6 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #'   \item *p.value* the p-value of the test.
 #' }
 #' @importFrom reticulate import
-#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
 mmd_test <- function(x, y, kernel_function = 'rbf', iterations = 10^4,
                      ...) {

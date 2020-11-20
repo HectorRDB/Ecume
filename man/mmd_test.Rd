@@ -4,7 +4,7 @@
 \alias{mmd_test}
 \title{Perform the Maximum Mean Discrepancy unbiased boostrap test}
 \usage{
-mmd_test(x, y, kernel_function = "rbf", ...)
+mmd_test(x, y, kernel_function = "rbf", iterations = 10^4, ...)
 }
 \arguments{
 \item{x}{d-dimenstional smaples from the first distribution}
