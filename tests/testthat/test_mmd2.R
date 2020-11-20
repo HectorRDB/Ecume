@@ -1,8 +1,14 @@
 library(testthat)
-sklrn <- reticulate::import("sklearn.metrics")
+skip_if_no_sklearn <- function() {
+  have_sklearn <- py_module_available("sklearn")
+  if (!have_sklearn)
+    skip("sklearn not available for testing")
+}
 
 test_that("the mmd_test works with all inputs",{
   set.seed(08)
+  skip_if_no_sklearn()
+  sklrn <- reticulate::import("sklearn.metrics")
   x <- matrix(c(runif(100, 0, 1),
                 runif(100, -1, 1)),
               ncol = 2)
