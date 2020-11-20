@@ -32,7 +32,8 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
 
     before_install:
-      - pip install numpy sklearn
+      run : |
+        pip install numpy sklearn
 
     steps:
       - uses: actions/checkout@v2
