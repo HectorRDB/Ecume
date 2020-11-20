@@ -13,6 +13,9 @@ mmd_test(x, y, kernel_function = "rbf", iterations = 10^4, ...)
 
 \item{kernel_function}{A character that must match a known kernel. See details.}
 
+\item{iterations}{How many iterations to do to simulate the null distribution.
+Default to 10^4.}
+
 \item{...}{Further arguments passed to kernel functions}
 }
 \value{
@@ -31,9 +34,11 @@ The code relies on the pairwise_kernel function from the python module
 sklearn. To list the available kernels, see the examples.
 }
 \examples{
- x <- rnorm(1000, 0, 1)
- y <- rnorm(1000, 0, 2)
- mmd_test(x, y)
+if (reticulate::py_module_available("sklearn")) {
+  x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+  y <- matrix(rnorm(1000, 0, 2), ncol = 10)
+  mmd_test(x, y)
+}
 \dontrun{
  sklrn <- reticulate::import("sklearn.metrics")
  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)

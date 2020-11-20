@@ -3,6 +3,7 @@ MMD2u <- function(K, m, n) {
   Kx <- K[1:m, 1:m]
   diag(Kx) <- NA
   Ky <- K[(m + 1):n, (m + 1):n]
+  diag(Ky) <- NA
   Kxy <- K[1:m, (m + 1):n]
   term1 = 1.0 / (m * (m - 1.0)) * sum(Kx, na.rm = TRUE)
   term2 = 1.0 / (n * (n - 1.0)) * sum(Ky, na.rm = TRUE)
@@ -30,13 +31,15 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #' @param x d-dimenstional smaples from the first distribution
 #' @param y d-dimenstional smaples from the first distribution
 #' @param kernel_function A character that must match a known kernel. See details.
+#' @param iterations How many iterations to do to simulate the null distribution.
+#' Default to 10^4.
 #' @param ... Further arguments passed to kernel functions
 #' @examples
-#'  if (reticulate::py_module_available("sklearn")) {
-#'    x <- rnorm(1000, 0, 1)
-#'    y <- rnorm(1000, 0, 2)
-#'    mmd_test(x, y)
-#'  }
+#' if (reticulate::py_module_available("sklearn")) {
+#'   x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+#'   y <- matrix(rnorm(1000, 0, 2), ncol = 10)
+#'   mmd_test(x, y)
+#' }
 #' \dontrun{
 #'  sklrn <- reticulate::import("sklearn.metrics")
 #'  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
@@ -59,25 +62,20 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #' @export
 mmd_test <- function(x, y, kernel_function = 'rbf', iterations = 10^4,
                      ...) {
-  proc <- basilisk::basiliskStart(my_env)
-  on.exit(basilisk::basiliskStop(proc))
-  some_useful_thing <- basilisk::basiliskRun(proc,
-                                             function(X, Y, kernel_function) {
     # Compute MMD^2_u, its null distribution and the p-value of the
     # kernel two-sample test.
+    X <- x
+    Y <- y
     sklrn <- reticulate::import("sklearn.metrics")
     m <- nrow(X)
     n <- nrow(Y)
     XY <- rbind(X, Y)
-    args <- list(....)
+    args <- list(...)
     args$X <- XY
     args$metric <- kernel_function
     K <- do.call(what = sklrn$pairwise_kernels, args = args)
     mmd2u <- MMD2u(K, m, n)
     mmd2u_null <- compute_null_distribution(K, m, n, iterations = iterations)
     p_value <- max(1 / iterations, mean(mmd2u_null > mmd2u))
-    return(mmd2u, mmd2u_null, p_value)
-  }, arg1 = x, arg2 = y, kernel_function = kernel_function,
-    iterations = iterations, ... = ...)
-  return(list("statistic" = res$mmdu, "p.value" = res$p_value))
+  return(list("statistic" = mmd2u, "p.value" = p_value))
 }

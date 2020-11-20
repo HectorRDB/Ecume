@@ -12,15 +12,13 @@ install_dependencies(method = "auto", conda = "auto")
 \item{conda}{Passed to \link[reticulate]{py_install}}
 }
 \value{
-
+Nothing
 }
 \description{
 Install the required python packages
 }
 \details{
-This computes the MMD^2 unbiased statistics from Gretton et al.
-The code relies on the pairwise_kernel function from the python module
-sklearn. To list the available kernels, see the examples.
+This install the required python packages for the installation.
 }
 \examples{
 \dontrun{
