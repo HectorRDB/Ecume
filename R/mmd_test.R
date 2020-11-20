@@ -1,42 +1,55 @@
 .rbf <- function(x, y, g) {
-  norm <- sum((x-y)^2)
+  norm <- sum((x - y)^2)
   d <- -1.0 / (2 * (g^2))
   return(exp(d * norm))
 }
 
-h <- function(k, z_1, z_2) {
-  x_1 <- z_1[1,]; x_2 <- z_2[1,]; y_1 <- z_1[2,]; y_2 <- z_2[2,]
-  return(k(x_1, x_2) + k(y_1, y_2) - k(x_1, y_1) - k(x_2, y_2))
-
+h <- function(zs, d, k, ...) {
+  x_1 <- zs[seq_len(d)]; x_2 <- zs[(d + 1):(2 * d)]
+  y_1 <- zs[(2 * d + 1):(3 * d)]; y_2 <- zs[(3 * d + 1):(4 * d)]
+  return(
+    k(x_1, x_2, ...) + k(y_1, y_2, ...) - k(x_1, y_1, ...) - k(x_2, y_2, ...)
+  )
 }
 
-.mmd_stat_linear <- function(x, y, g) {
-  n <- length(x)
-  m <- length(y)
+.mmd_stat_linear <- function(x, y, k, ...) {
+  n <- nrow(x)
+  m <- ncol(y)
+  d <- ncol(x)
   l <- min(m, n)
   x <- x[base::sample(seq_len(n), l), ]
   y <- y[base::sample(seq_len(m), l), ]
   l2 <- floor(l / 2)
-  inds <- sample(seq_len(l))
-  z_1s <- base::cbind()
-  kxx <- .rbf(x[1:m2,], x[(m2 + 1):m], g)
-  kyy <- .rbf(y[1:m2], y[(m2 + 1):m], g)
-  kxy <- .rbf(x[1:m2], y[(m2 + 1):m], g)
-  kyx <- .rbf(y[1:m2], x[(m2 + 1):m], g)
-  res <- kxx + kyy - kxy - kyx
+  inds <- sample(seq_len(l), l2)
+  zs <- cbind(x[inds,], x[-inds, ], y[inds,], y[-inds, ])
+  res <- apply(zs, 1, h, d = d, k = k, ... = ...)
   return(res)
 }
 
+.mmd_stat_unbiased <- function(x, y, k, ...) {
+  n <- nrow(x)
+  m <- ncol(y)
+  d <- ncol(x)
+  term1 <- .vectorized_pdist(x, x)
+  term1 <- apply(term1, 1, function(row) {
+    apply(row, 1, k, ... = ...)
+  })
+  term1 <- sum(term1)
+  term2 <- .vectorized_pdist(x, x)
+  term1 <- apply(term1, 1, function(row) {
+    apply(row, 1, k, ... = ...)
+  })
+  term1 <- sum(term1)
+}
 
-
-.mmd_stat <- function(x, y, g, type = c("Unbiased", "Biased", "Linear")) {
+.mmd_stat <- function(x, y, type = c("Unbiased", "Biased", "Linear"), ...) {
   type <- match.arg(type)
   if (type == "Linear") {
-    res <- .mmd_stat_linear(x, y, g)
+    res <- .mmd_stat_linear(x, y, ...)
   } else if (type == "Biased") {
-    res <- .mmd_stat_linear(x, y, g)
+    res <- .mmd_stat_linear(x, y, ...)
   } else if (type == "Unbiased") {
-    res <- .mmd_stat_linear(x, y, g)
+    res <- .mmd_stat_linear(x, y, ...)
   }
 
   return(list("mean" = mean(res), "variance" = stats::var(res) / m2))
