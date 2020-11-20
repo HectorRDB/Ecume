@@ -35,7 +35,7 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #'  x <- rnorm(1000, 0, 1)
 #'  y <- rnorm(1000, 0, 2)
 #'  mmd_test(x, y)
-#' \donotrun{
+#' \dontrun{
 #'  sklrn <- reticulate::import("sklearn.metrics")
 #'  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
 #' }
@@ -53,10 +53,11 @@ compute_null_distribution <- function(K, m, n, iterations = 10000) {
 #'   \item *statistic* the value of the test statistic.
 #'   \item *p.value* the p-value of the test.
 #' }
-#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @importFrom reticulate import
+#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
-mmd_test <- function(x, y, kernel_function = 'rbf', ...) {
+mmd_test <- function(x, y, kernel_function = 'rbf', iterations = 10^4,
+                     ...) {
   proc <- basilisk::basiliskStart(my_env)
   on.exit(basilisk::basiliskStop(proc))
   some_useful_thing <- basilisk::basiliskRun(proc,
@@ -70,11 +71,12 @@ mmd_test <- function(x, y, kernel_function = 'rbf', ...) {
     args <- list(....)
     args$X <- XY
     args$metric <- kernel_function
-    K <- do.call(what = sklrn$pairwise_kernels, args)
+    K <- do.call(what = sklrn$pairwise_kernels, args = args)
     mmd2u <- MMD2u(K, m, n)
-    mmd2u_null <- compute_null_distribution(K, m, n, iterations)
-    p_value = max(1 / iterations, mean(mmd2u_null > mmd2u))
+    mmd2u_null <- compute_null_distribution(K, m, n, iterations = iterations)
+    p_value <- max(1 / iterations, mean(mmd2u_null > mmd2u))
     return(mmd2u, mmd2u_null, p_value)
-  }, arg1 = x, arg2 = y, ... = ...)
+  }, arg1 = x, arg2 = y, kernel_function = kernel_function,
+    iterations = iterations, ... = ...)
   return(list("statistic" = res$mmdu, "p.value" = res$p_value))
 }

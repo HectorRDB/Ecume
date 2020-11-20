@@ -34,7 +34,7 @@ sklearn. To list the available kernels, see the examples.
  x <- rnorm(1000, 0, 1)
  y <- rnorm(1000, 0, 2)
  mmd_test(x, y)
-\donotrun{
+\dontrun{
  sklrn <- reticulate::import("sklearn.metrics")
  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
 }
