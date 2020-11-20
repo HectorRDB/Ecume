@@ -1,6 +1,6 @@
 library(testthat)
 skip_if_no_sklearn <- function() {
-  have_sklearn <- py_module_available("sklearn")
+  have_sklearn <- reticulate::py_module_available("sklearn")
   if (!have_sklearn)
     skip("sklearn not available for testing")
 }
