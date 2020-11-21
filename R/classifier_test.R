@@ -74,9 +74,9 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
                       ...)
   test_res <- caret::predict.train(ref, newdata = X[-training_set$Resample1, ])
   accuracy <- sum(test_res == X[-training_set$Resample1, "type"])
-  p_hat <- mean(test_res == X[-training_set$Resample1, "type"])
+  p_hat <- mean(test_res == X[-training_set$Resample1, "type"]) - thresh
   min_accuracy <- max(table(X$type)) / nrow(X)
-  pval <- stats::pbinom(accuracy - thresh,
+  pval <- stats::pbinom(p_hat * length(test_res),
                         size = length(test_res),
                         prob = min_accuracy,
                         lower.tail = FALSE)
