@@ -1,13 +1,10 @@
-MMD2u <- function(K, m, n) {
+MMD2u <- function(Kx, Ky, Kxy) {
   # The MMD^2_u unbiased statistic.
-  Kx <- K[1:m, 1:m]
-  diag(Kx) <- NA
-  Ky <- K[(m + 1):n, (m + 1):n]
-  diag(Ky) <- NA
-  Kxy <- K[1:m, (m + 1):n]
-  term1 = 1.0 / (m * (m - 1.0)) * sum(Kx, na.rm = TRUE)
-  term2 = 1.0 / (n * (n - 1.0)) * sum(Ky, na.rm = TRUE)
-  term3 = 2.0 / (m * n) * sum(Kxy)
+  m <- nrow(kx)
+  n <- nrow(Ky)
+  term1 <- 1.0 / (m * (m - 1.0)) * sum(Kx, na.rm = TRUE)
+  term2 <- 1.0 / (n * (n - 1.0)) * sum(Ky, na.rm = TRUE)
+  term3 <- 2.0 / (m * n) * sum(Kxy)
   return(term1 + term2 - term3)
 }
 
@@ -71,10 +68,25 @@ mmd_test <- function(x, y, kernel_function = 'rbf', iterations = 10^4,
     n <- nrow(Y)
     XY <- rbind(X, Y)
     args <- list(...)
-    args$X <- XY
     args$metric <- kernel_function
-    K <- do.call(what = sklrn$pairwise_kernels, args = args)
-    mmd2u <- MMD2u(K, m, n)
+    # Kernel for Y
+    args$X <- Y
+    Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
+    diag(Ky) <- NA
+    Ky[Ky < .Machine$double.eps] <- 0
+    Ky <- Matrix::Matrix(data = Ky, sparse = TRUE)
+    # Kernel for X
+    args$X <- X
+    Kx <- do.call(what = sklrn$pairwise_kernels, args = args)
+    diag(Kx) <- NA
+    Kx[Kx < .Machine$double.eps] <- 0
+    Kx <- Matrix::Matrix(data = Kx, sparse = TRUE)
+    # Kernel for X/Y
+    args$Y <- Y
+    Kxy <- do.call(what = sklrn$pairwise_kernels, args = args)
+    Kxy[Kxy < .Machine$double.eps] <- 0
+    Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
+    mmd2u <- MMD2u(Kx, Ky, Kxy)
     mmd2u_null <- compute_null_distribution(K, m, n, iterations = iterations)
     p_value <- max(1 / iterations, mean(mmd2u_null > mmd2u))
   return(list("statistic" = mmd2u, "p.value" = p_value))
