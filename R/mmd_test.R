@@ -159,7 +159,7 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
   if (type == "unbiased") {
     K <- .full_kernel(X, Y, sklrn, kernel_function, ...)
     statistic <- MMD2u(K, m, n)
-    if (null == "permutations") {
+    if (null == "permutation") {
       null <- compute_null_distribution_u(K, m, n ,iterations = iterations)
       p.value <- max(1 / iterations, mean(null > statistic))
     }
