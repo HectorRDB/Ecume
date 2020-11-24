@@ -141,7 +141,7 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
                      type = ifelse(min(nrow(x), nrow(y)) < 1000,
                                    "unbiased", "linear"),
                      null = c("permutation", "exact"),
-                     iterations = 10^4,
+                     iterations = 10^3,
                      frac = .1,
                      ...) {
   null <- match.arg(null)
