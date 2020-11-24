@@ -19,7 +19,8 @@ Imports:
     dplyr,
     e1071,
     methods,
-    reticulate
+    reticulate,
+    Matrix
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
