@@ -20,7 +20,8 @@ Imports:
     e1071,
     methods,
     reticulate,
-    Matrix
+    Matrix,
+    pbapply
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,

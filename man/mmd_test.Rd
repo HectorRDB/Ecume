@@ -11,6 +11,7 @@ mmd_test(
   type = ifelse(min(nrow(x), nrow(y)) < 1000, "unbiased", "linear"),
   null = c("permutation", "exact"),
   iterations = 10^4,
+  frac = 0.1,
   ...
 )
 }
@@ -30,6 +31,8 @@ if the \code{type} is 'unbiased' and the \code{kernel_function} is 'rbf'.}
 
 \item{iterations}{How many iterations to do to simulate the null distribution.
 Default to 10^4. Only used if \code{null} is 'permutations'}
+
+\item{frac}{For the linear statistic, how many points to sample.}
 
 \item{...}{Further arguments passed to kernel functions}
 }

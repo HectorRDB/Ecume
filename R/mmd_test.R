@@ -20,15 +20,13 @@ MMD2u <- function(K, m, n) {
   return(term1 + term2 - term3)
 }
 
-
 compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   # Compute the bootstrap null-distribution of MMD2u.
-  mmd2u_null <- rep(0, iterations)
-  for (i in seq_len(iterations)) {
+  mmd2u_null <- pbapply::pblapply(seq_len(iterations), function(i) {
     idx <- sample(m + n)
     K_i <- K[idx, idx]
-    mmd2u_null[i] <- MMD2u(K_i, m, n)
-  }
+    return(MMD2u(K_i, m, n))
+  })
   return(mmd2u_null)
 }
 
@@ -52,13 +50,11 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   # Kernel for Y
   args$X <- Y
   Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
-  # diag(Ky) <- NA
   Ky[abs(Ky) < .Machine$double.eps] <- 0
   Ky <- Matrix::Matrix(data = Ky, sparse = TRUE)
   # Kernel for X
   args$X <- X
   Kx <- do.call(what = sklrn$pairwise_kernels, args = args)
-  # diag(Kx) <- NA
   Kx[abs(Kx) < .Machine$double.eps] <- 0
   Kx <- Matrix::Matrix(data = Kx, sparse = TRUE)
   # Kernel for X/Y
@@ -69,7 +65,6 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
   return(.compress_kernel(Kx, Ky, Kxy, Kyx, frac = frac))
 }
-
 
 MMDl <- function(Kx_, Ky_,  l) {
   # The MMD^2_u linear statistic.
@@ -85,7 +80,7 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
   l <- sample_Ks$l
   Kx_ <- sample_Ks$Kx_
   Ky_ <- sample_Ks$Ky_
-  mmdl_null <- lapply(seq_len(iterations), function(i){
+  mmdl_null <- pbapply::pblapply(seq_len(iterations), function(i){
     ids <- sample(2 * l)
     Kx_i <- Kx_[ids]
     Ky_i <- Ky_[ids]
@@ -108,6 +103,7 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #' if the `type` is 'unbiased' and the `kernel_function` is 'rbf'.
 #' @param iterations How many iterations to do to simulate the null distribution.
 #' Default to 10^4. Only used if `null` is 'permutations'
+#' @param frac For the linear statistic, how many points to sample.
 #' @param ... Further arguments passed to kernel functions
 #' @examples
 #' if (reticulate::py_module_available("sklearn")) {
@@ -139,12 +135,14 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #' }
 #' @importFrom reticulate import
 #' @importFrom Matrix Matrix
+#' @importFrom pbapply pbapply
 #' @export
 mmd_test <- function(x, y, kernel_function = 'rbf',
                      type = ifelse(min(nrow(x), nrow(y)) < 1000,
                                    "unbiased", "linear"),
                      null = c("permutation", "exact"),
                      iterations = 10^4,
+                     frac = .1,
                      ...) {
   null <- match.arg(null)
   if (null == "exact" && (type == "linear" | kernel_function != 'rbf')) {
@@ -161,15 +159,15 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
     K <- .full_kernel(X, Y, sklrn, kernel_function, ...)
     statistic <- MMD2u(K, m, n)
     if (null == "permutation") {
-      null <- compute_null_distribution_u(K, m, n ,iterations = iterations)
-      p.value <- max(1 / iterations, mean(null > statistic))
+      nulls <- compute_null_distribution_u(K, m, n ,iterations = iterations)
+      p.value <- max(1 / iterations, mean(nulls > statistic))
     }
   }
   if (type == "linear") {
-    sample_Ks <- .ind_kernels(X, Y, sklrn, kernel_function, frac = 0.1, ...)
+    sample_Ks <- .ind_kernels(X, Y, sklrn, kernel_function, frac = frac, ...)
     statistic <- MMDl(sample_Ks$Kx_, sample_Ks$Ky_, sample_Ks$l)
-    null <- compute_null_distribution_l(sample_Ks, iterations = iterations)
-    p.value <- max(1 / iterations, mean(null > statistic))
+    nulls <- compute_null_distribution_l(sample_Ks, iterations = iterations)
+    p.value <- max(1 / iterations, mean(nulls > statistic))
   }
   return(list("statistic" = statistic, "p.value" = p.value))
 }
