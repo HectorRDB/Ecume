@@ -17,4 +17,7 @@ test_that("the mmd_test works with all inputs",{
               ncol = 2)
   test <- mmd_test(x, y)
   expect_is(test, "list")
+  test <- mmd_test(x, y, type = "linear")
+  expect_is(test, "list")
+  expect_error(mmd_test(x, y, type = "linear", null = "exact"))
 })
