@@ -138,6 +138,7 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #'   \item *p.value* the p-value of the test.
 #' }
 #' @importFrom reticulate import
+#' @importFrom Matrix Matrix
 #' @export
 mmd_test <- function(x, y, kernel_function = 'rbf',
                      type = ifelse(min(nrow(x), nrow(y)) < 1000,
