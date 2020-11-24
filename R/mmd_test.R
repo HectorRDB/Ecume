@@ -114,6 +114,7 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #'   x <- matrix(rnorm(1000, 0, 1), ncol = 10)
 #'   y <- matrix(rnorm(1000, 0, 2), ncol = 10)
 #'   mmd_test(x, y)
+#'   mmd_test(x, y, type = "linear")
 #'   x <- matrix(rnorm(1000, 0, 1), ncol = 10)
 #'   y <- matrix(rnorm(1000, 0, 1), ncol = 10)
 #'   mmd_test(x, y)
@@ -156,7 +157,7 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
   m <- nrow(X)
   n <- nrow(Y)
   if (type == "unbiased") {
-    K <- .full_kernek(X, Y, sklrn, kernel_function, ...)
+    K <- .full_kernel(X, Y, sklrn, kernel_function, ...)
     statistic <- MMD2u(K, m, n)
     if (null == "permutations") {
       null <- compute_null_distribution_u(K, m, n ,iterations = iterations)
