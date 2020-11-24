@@ -10,7 +10,7 @@ mmd_test(
   kernel_function = "rbf",
   type = ifelse(min(nrow(x), nrow(y)) < 1000, "unbiased", "linear"),
   null = c("permutation", "exact"),
-  iterations = 10^4,
+  iterations = 10^3,
   frac = 0.1,
   ...
 )
