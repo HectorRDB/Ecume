@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: install python
         run : |
-          pip install numpy sklearn
+          conda install numpy sklearn
   
       - name: Check out repo
         uses: actions/checkout@v2
@@ -90,6 +90,7 @@ jobs:
         run: |
           Rscript -e "remotes::install_github('r-hub/sysreqs')"
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo apt-get python2-minimal
           sudo -s eval "$sysreqs"
           sudo apt-get update && sudo apt-get -y install libcurl4-openssl-dev
 
