@@ -79,7 +79,7 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
     Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
     return(list("Kx" = Kx, "Ky" = Ky, "Kxy" = Kxy, "Kyx" = Kyx))
   }, args = args, X = X, Y = Y)
-  return(.compress_kernel(Ks$Kx, Ks$Ky, Ks$Kxy, Ks$Kyx, Ks$frac = frac))
+  return(.compress_kernel(Ks$Kx, Ks$Ky, Ks$Kxy, Ks$Kyx, frac = frac))
 }
 
 MMDl <- function(Kx_, Ky_,  l) {
