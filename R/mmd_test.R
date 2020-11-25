@@ -1,19 +1,25 @@
-.full_kernel <- function(X, Y, sklrn, kernel_function, ...) {
+.full_kernel <- function(X, Y, kernel_function, ...) {
+  proc <- basilisk::basiliskStart(my_env)
+  on.exit(basilisk::basiliskStop(proc))
   XY <- rbind(X, Y)
   args <- list(...)
   args$X <- XY
   args$metric <- kernel_function
-  K <- do.call(what = sklrn$pairwise_kernels, args = args)
+  K <- basilisk::basiliskRun(proc, function(args) {
+    sklrn <- reticulate::import("sklearn.metrics")
+    K <- do.call(what = sklrn$pairwise_kernels, args = args)
+    return(K)
+  }, args = args)
   return(K)
 }
 
 MMD2u <- function(K, m, n) {
   # The MMD^2_u unbiased statistic.
-  Kx2 <- K[1:m, 1:m]
+  Kx2 <- K[seq_len(m), seq_len(m)]
   diag(Kx2) <- NA
   Ky2 <- K[(m + 1):(m + n), (m + 1):(m + n)]
   diag(Ky2) <- NA
-  Kxy2 <- K[1:m, (m + 1):(m + n)]
+  Kxy2 <- K[seq_len(m), (m + 1):(m + n)]
   term1 <- (1.0 / (m * (m - 1.0))) * sum(Kx2, na.rm = TRUE)
   term2 <- (1.0 / (n * (n - 1.0))) * sum(Ky2, na.rm = TRUE)
   term3 <- (2.0 / (m * n)) * sum(Kxy2)
@@ -35,8 +41,12 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   n <- nrow(Ky)
   l <- min((m ^ 2 - m) / 2, (n ^ 2 - n) / 2) * frac
   # Sample values from the pairwise kernel
+  Kx <- as.matrix(Kx)
   Kx_linear <- sample(Kx[upper.tri(Kx)], l)
+  Kx <- 0
+  Ky <- as.matrix(Ky)
   Ky_linear <- sample(Ky[upper.tri(Ky)], l)
+  Ky <- 0
   Kxy_linear <- sample(Kxy, l)
   Kyx_linear <- sample(Kyx, l)
   Kx_ <- c(Kx_linear, Kxy_linear)
@@ -44,26 +54,32 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   return(list("Kx_" = Kx_, "Ky_" = Ky_, "l" = l))
 }
 
-.ind_kernels <- function(X, Y, sklrn, kernel_function, frac = 0.1, ...){
+.ind_kernels <- function(X, Y, kernel_function, frac = 0.1, ...){
+  proc <- basilisk::basiliskStart(my_env)
+  on.exit(basilisk::basiliskStop(proc))
   args <- list(...)
   args$metric <- kernel_function
   # Kernel for Y
-  args$X <- Y
-  Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
-  Ky[abs(Ky) < .Machine$double.eps] <- 0
-  Ky <- Matrix::Matrix(data = Ky, sparse = TRUE)
-  # Kernel for X
-  args$X <- X
-  Kx <- do.call(what = sklrn$pairwise_kernels, args = args)
-  Kx[abs(Kx) < .Machine$double.eps] <- 0
-  Kx <- Matrix::Matrix(data = Kx, sparse = TRUE)
-  # Kernel for X/Y
-  args$Y <- Y
-  Kxy <- do.call(what = sklrn$pairwise_kernels, args = args)
-  Kxy[abs(Kxy) < .Machine$double.eps] <- 0
-  Kyx <- Matrix::Matrix(data = t(Kxy), sparse = TRUE)
-  Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
-  return(.compress_kernel(Kx, Ky, Kxy, Kyx, frac = frac))
+  Ks <- basilisk::basiliskRun(proc, function(args, X, Y) {
+    args$X <- Y
+    sklrn <- reticulate::import("sklearn.metrics")
+    Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
+    Ky[abs(Ky) < .Machine$double.eps] <- 0
+    Ky <- Matrix::Matrix(data = Ky, sparse = TRUE)
+    # Kernel for X
+    args$X <- X
+    Kx <- do.call(what = sklrn$pairwise_kernels, args = args)
+    Kx[abs(Kx) < .Machine$double.eps] <- 0
+    Kx <- Matrix::Matrix(data = Kx, sparse = TRUE)
+    # Kernel for X/Y
+    args$Y <- Y
+    Kxy <- do.call(what = sklrn$pairwise_kernels, args = args)
+    Kxy[abs(Kxy) < .Machine$double.eps] <- 0
+    Kyx <- Matrix::Matrix(data = t(Kxy), sparse = TRUE)
+    Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
+    return(list("Kx" = Kx, "Ky" = Ky, "Kxy" = Kxy, "Kyx" = Kyx))
+  }, args = args, X = X, Y = Y)
+  return(.compress_kernel(Ks$Kx, Ks$Ky, Ks$Kxy, Ks$Kyx, frac = frac))
 }
 
 MMDl <- function(Kx_, Ky_,  l) {
@@ -136,6 +152,7 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #' @importFrom reticulate import
 #' @importFrom Matrix Matrix
 #' @importFrom pbapply pbapply
+#' @import basilisk
 #' @export
 mmd_test <- function(x, y, kernel_function = 'rbf',
                      type = ifelse(min(nrow(x), nrow(y)) < 1000,
@@ -152,11 +169,10 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
   # kernel two-sample test.
   X <- x
   Y <- y
-  sklrn <- reticulate::import("sklearn.metrics")
-  m <- nrow(X)
-  n <- nrow(Y)
+  m <- nrow(x)
+  n <- nrow(y)
   if (type == "unbiased") {
-    K <- .full_kernel(X, Y, sklrn, kernel_function, ...)
+    K <- .full_kernel(X, Y, kernel_function, ...)
     statistic <- MMD2u(K, m, n)
     if (null == "permutation") {
       nulls <- compute_null_distribution_u(K, m, n ,iterations = iterations)
@@ -164,7 +180,7 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
     }
   }
   if (type == "linear") {
-    sample_Ks <- .ind_kernels(X, Y, sklrn, kernel_function, frac = frac, ...)
+    sample_Ks <- .ind_kernels(X, Y, kernel_function, frac = frac, ...)
     statistic <- MMDl(sample_Ks$Kx_, sample_Ks$Ky_, sample_Ks$l)
     nulls <- compute_null_distribution_l(sample_Ks, iterations = iterations)
     p.value <- max(1 / iterations, mean(nulls > statistic))
