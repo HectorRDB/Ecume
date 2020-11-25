@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: install python
         run : |
-          conda install scikit-learn
+          pip install scikit-learn
   
       - name: Check out repo
         uses: actions/checkout@v2
