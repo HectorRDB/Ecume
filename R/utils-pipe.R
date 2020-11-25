@@ -7,5 +7,7 @@
 #' @keywords internal
 #' @export
 #' @importFrom magrittr %>%
+#' @examples
+#' 2 %>% seq_len
 #' @usage lhs \%>\% rhs
 NULL

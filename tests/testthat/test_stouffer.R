@@ -1,6 +1,7 @@
 library(testthat)
 
-test_that("stouffer_Z_scoreworks with all inputs",{
+test_that("stouffer_Z_score works with all inputs",{
+  set.seed(90)
   pvals <- runif(100, 0, 1)
   weights <- runif(100, 0, 1)
   expect_is(stouffer_zscore(pvals, weights), "list")
