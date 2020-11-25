@@ -60,7 +60,7 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   args <- list(...)
   args$metric <- kernel_function
   # Kernel for Y
-  Ks <- basilisk::basiliskRun(proc, function(args, X, Y, frac) {
+  Ks <- basilisk::basiliskRun(proc, function(args, X, Y) {
     args$X <- Y
     sklrn <- reticulate::import("sklearn.metrics")
     Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
@@ -77,9 +77,9 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
     Kxy[abs(Kxy) < .Machine$double.eps] <- 0
     Kyx <- Matrix::Matrix(data = t(Kxy), sparse = TRUE)
     Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
-    return(.compress_kernel(Kx, Ky, Kxy, Kyx, frac = frac))
-  }, args = args, X = X, Y = Y, frac = frac)
-  return(Ks)
+    return(list("Kx" = Kx, "Ky" = Ky, "Kxy" = Kxy, "Kyx" = Kyx))
+  }, args = args, X = X, Y = Y)
+  return(.compress_kernel(Ks$Kx, Ks$Ky, Ks$Kxy, Ks$Kyx, Ks$frac = frac))
 }
 
 MMDl <- function(Kx_, Ky_,  l) {
