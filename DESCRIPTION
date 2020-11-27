@@ -11,6 +11,9 @@ Description: We implement (or re-implements in R) a variety of
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+biocViews:
+    Software,
+    Infrastructure
 Imports: 
     stats,
     spatstat,
