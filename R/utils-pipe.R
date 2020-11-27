@@ -7,6 +7,7 @@
 #' @keywords internal
 #' @export
 #' @importFrom magrittr %>%
+#' @return The pipe
 #' @examples
 #' 2 %>% seq_len
 #' @usage lhs \%>\% rhs
