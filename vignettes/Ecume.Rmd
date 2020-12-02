@@ -96,23 +96,23 @@ set.seed(20)
 x <- matrix(c(rnorm(100, 0, 1),
               rnorm(100, 0, 1)),
             ncol = 2)
-y <- matrix(c(rnorm(200, 0, 1.5),
+y <- matrix(c(rnorm(200, 0, 2),
               rnorm(200, 0, 1)),
             ncol = 2)
 mmd_test(x = x, y = y, iterations = 10^4)
 ```
 
-If the number of samples is too large, we can use a "linear" form of the statistics that samples elements from the sums above. The `frac` argument controls how many elements are used.
+If the number of samples is too large, we can use a "linear" form of the statistics that samples elements from the sums above. 
 
 ```{r}
 set.seed(20)
 x <- matrix(c(rnorm(100, 0, 1),
               rnorm(100, 0, 1)),
             ncol = 2)
-y <- matrix(c(rnorm(200, 0, 1.5),
+y <- matrix(c(rnorm(200, 0, 2),
               rnorm(200, 0, 1)),
             ncol = 2)
-mmd_test(x = x, y = y, iterations = 10^4, type = "linear", frac = .5)
+mmd_test(x = x, y = y, iterations = 10^4, type = "linear")
 ```
 
 ## Classifier Test

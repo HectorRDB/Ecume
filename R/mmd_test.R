@@ -1,15 +1,6 @@
-.full_kernel <- function(X, Y, kernel_function, ...) {
-  proc <- basilisk::basiliskStart(my_env)
-  on.exit(basilisk::basiliskStop(proc))
-  XY <- rbind(X, Y)
-  args <- list(...)
-  args$X <- XY
-  args$metric <- kernel_function
-  K <- basilisk::basiliskRun(proc, function(args) {
-    sklrn <- reticulate::import("sklearn.metrics")
-    K <- do.call(what = sklrn$pairwise_kernels, args = args)
-    return(K)
-  }, args = args)
+.full_kernel <- function(x, y, norms, kernel, ...) {
+  z <- rbind(x, y)
+  K <- kernlab::kernelFast(kernel, z, z, norms)
   return(K)
 }
 
@@ -36,50 +27,29 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   return(mmd2u_null)
 }
 
-.compress_kernel <- function(Kx, Ky, Kxy, Kyx, frac = .1) {
-  m <- nrow(Kx)
-  n <- nrow(Ky)
-  l <- min((m ^ 2 - m) / 2, (n ^ 2 - n) / 2) * frac
-  # Sample values from the pairwise kernel
-  Kx <- as.matrix(Kx)
-  Kx_linear <- sample(Kx[upper.tri(Kx)], l)
-  Kx <- 0
-  Ky <- as.matrix(Ky)
-  Ky_linear <- sample(Ky[upper.tri(Ky)], l)
-  Ky <- 0
-  Kxy_linear <- sample(Kxy, l)
-  Kyx_linear <- sample(Kyx, l)
-  Kx_ <- c(Kx_linear, Kxy_linear)
-  Ky_ <- c(Ky_linear, Kyx_linear)
+.ind_kernels <- function(x, y, m, n, kernel, frac = 1){
+  # Sample for X
+  l <- min(round(sqrt(frac * m)), round(sqrt(frac * n)))
+  idx <- sample(m, 2 * l)
+  x1 <- x[idx[seq_len(l)], ]
+  norms_x1 <- rowSums(x1^2)
+  x2 <- x[idx[seq(l + 1, 2 * l)], ]
+  norms_x2 <- rowSums(x2^2)
+  # Sample for Y
+  l <- round(sqrt(frac * n))
+  idy <- sample(n, 2 * l)
+  y1 <- y[idy[seq_len(l)], ]
+  norms_y1 <- rowSums(y1^2)
+  y2 <- y[idx[seq(l + 1, 2 * l)], ]
+  norms_y2 <- rowSums(y2^2)
+  # Kernels
+  Kx <- kernlab::kernelFast(kernel, x1, x2, norms_x1) %>% as.vector()
+  Ky <- kernlab::kernelFast(kernel, y1, y2, norms_y1) %>% as.vector()
+  Kxy <- kernlab::kernelFast(kernel, x1, y1, norms_x1) %>% as.vector()
+  Kyx <- kernlab::kernelFast(kernel, y2, x2, norms_y2) %>% as.vector()
+  Kx_ <- c(Kx, Kxy)
+  Ky_ <- c(Ky, Kyx)
   return(list("Kx_" = Kx_, "Ky_" = Ky_, "l" = l))
-}
-
-.ind_kernels <- function(X, Y, kernel_function, frac = 0.1, ...){
-  proc <- basilisk::basiliskStart(my_env)
-  on.exit(basilisk::basiliskStop(proc))
-  args <- list(...)
-  args$metric <- kernel_function
-  # Kernel for Y
-  Ks <- basilisk::basiliskRun(proc, function(args, X, Y) {
-    args$X <- Y
-    sklrn <- reticulate::import("sklearn.metrics")
-    Ky <- do.call(what = sklrn$pairwise_kernels, args = args)
-    Ky[abs(Ky) < .Machine$double.eps] <- 0
-    Ky <- Matrix::Matrix(data = Ky, sparse = TRUE)
-    # Kernel for X
-    args$X <- X
-    Kx <- do.call(what = sklrn$pairwise_kernels, args = args)
-    Kx[abs(Kx) < .Machine$double.eps] <- 0
-    Kx <- Matrix::Matrix(data = Kx, sparse = TRUE)
-    # Kernel for X/Y
-    args$Y <- Y
-    Kxy <- do.call(what = sklrn$pairwise_kernels, args = args)
-    Kxy[abs(Kxy) < .Machine$double.eps] <- 0
-    Kyx <- Matrix::Matrix(data = t(Kxy), sparse = TRUE)
-    Kxy <- Matrix::Matrix(data = Kxy, sparse = TRUE)
-    return(list("Kx" = Kx, "Ky" = Ky, "Kxy" = Kxy, "Kyx" = Kyx))
-  }, args = args, X = X, Y = Y)
-  return(.compress_kernel(Ks$Kx, Ks$Ky, Ks$Kxy, Ks$Kyx, frac = frac))
 }
 
 MMDl <- function(Kx_, Ky_,  l) {
@@ -111,30 +81,24 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #'
 #' @param x d-dimenstional smaples from the first distribution
 #' @param y d-dimenstional smaples from the first distribution
-#' @param kernel_function A character that must match a known kernel. See details.
+#' @param kernel A character that must match a known kernel. See details.
 #' @param type Which statistic to use. One of 'unbiased' or 'linear'. See
 #' Gretton et al for details. Default to 'unbiased' if the two vectors are of
 #' length less than \code{1000} and to 'linear' otherwise.
 #' @param null How to asses the null distribution. This can only be set to exact
-#' if the `type` is 'unbiased' and the `kernel_function` is 'rbf'.
+#' if the `type` is 'unbiased' and the `kernel` is 'rbf'.
 #' @param iterations How many iterations to do to simulate the null distribution.
 #' Default to 10^4. Only used if `null` is 'permutations'
-#' @param frac For the linear statistic, how many points to sample.
+#' @param frac For the linear statistic, how many points to sample. See details.
 #' @param ... Further arguments passed to kernel functions
 #' @examples
-#' if (reticulate::py_module_available("sklearn")) {
-#'   x <- matrix(rnorm(1000, 0, 1), ncol = 10)
-#'   y <- matrix(rnorm(1000, 0, 2), ncol = 10)
-#'   mmd_test(x, y)
-#'   mmd_test(x, y, type = "linear")
-#'   x <- matrix(rnorm(1000, 0, 1), ncol = 10)
-#'   y <- matrix(rnorm(1000, 0, 1), ncol = 10)
-#'   mmd_test(x, y)
-#' }
-#' \dontrun{
-#'  sklrn <- reticulate::import("sklearn.metrics")
-#'  print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
-#' }
+#' x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+#' y <- matrix(rnorm(1000, 0, 2), ncol = 10)
+#' mmd_test(x, y)
+#' mmd_test(x, y, type = "linear")
+#' x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+#' y <- matrix(rnorm(1000, 0, 1), ncol = 10)
+#' mmd_test(x, y)
 #' @details
 #' This computes the MMD^2u unbiased statistic or the MMDl linear statistic
 #' from Gretton et al. The code relies on the pairwise_kernel function from the
@@ -149,30 +113,31 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #'   \item *statistic* the value of the test statistic.
 #'   \item *p.value* the p-value of the test.
 #' }
-#' @importFrom reticulate import
-#' @importFrom Matrix Matrix
 #' @importFrom pbapply pbapply
-#' @import basilisk
+#' @import kernlab
 #' @export
-mmd_test <- function(x, y, kernel_function = 'rbf',
+mmd_test <- function(x, y, kernel = 'rbfdot',
                      type = ifelse(min(nrow(x), nrow(y)) < 1000,
                                    "unbiased", "linear"),
                      null = c("permutation", "exact"),
                      iterations = 10^3,
-                     frac = .1,
+                     frac = 1,
                      ...) {
   null <- match.arg(null)
-  if (null == "exact" && (type == "linear" | kernel_function != 'rbf')) {
+  if (null == "exact" && (type == "linear" | kernel != 'rbfdot')) {
     stop("The exact mode only works with the unbiased statistic and the rbf kernel")
+  }
+  if (is.character(kernel)) {
+    args <- list(...)
+    kernel <- do.call(kernel, args)
   }
   # Compute MMD^2_u or MMDl, its null distribution and the p-value of the
   # kernel two-sample test.
-  X <- x
-  Y <- y
   m <- nrow(x)
   n <- nrow(y)
   if (type == "unbiased") {
-    K <- .full_kernel(X, Y, kernel_function, ...)
+    norms <- c(rowSums(x^2), rowSums(y^2))
+    K <- .full_kernel(x, y, norms, kernel, ...)
     statistic <- MMD2u(K, m, n)
     if (null == "permutation") {
       nulls <- compute_null_distribution_u(K, m, n ,iterations = iterations)
@@ -180,7 +145,7 @@ mmd_test <- function(x, y, kernel_function = 'rbf',
     }
   }
   if (type == "linear") {
-    sample_Ks <- .ind_kernels(X, Y, kernel_function, frac = frac, ...)
+    sample_Ks <- .ind_kernels(x, y, m , n, kernel, frac = frac, ...)
     statistic <- MMDl(sample_Ks$Kx_, sample_Ks$Ky_, sample_Ks$l)
     nulls <- compute_null_distribution_l(sample_Ks, iterations = iterations)
     p.value <- max(1 / iterations, mean(nulls > statistic))

@@ -6,5 +6,4 @@
 ^docs$
 ^pkgdown$
 ^\.github$
-.BBSoptions
 cran-comments.md

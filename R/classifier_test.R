@@ -45,7 +45,8 @@
 #' @export
 #' @importFrom dplyr bind_rows n_distinct
 #' @importFrom methods is
-#' @import stats caret e1071
+#' @import caret e1071
+#' @importFrom stats pbinom
 classifier_test <- function(x, y, split = .7, thresh = 0,
                             method = "knn",
                             control = caret::trainControl(method = "cv"),

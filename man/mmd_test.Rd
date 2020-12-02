@@ -7,11 +7,11 @@
 mmd_test(
   x,
   y,
-  kernel_function = "rbf",
+  kernel = "rbfdot",
   type = ifelse(min(nrow(x), nrow(y)) < 1000, "unbiased", "linear"),
   null = c("permutation", "exact"),
   iterations = 10^3,
-  frac = 0.1,
+  frac = 1,
   ...
 )
 }
@@ -20,19 +20,19 @@ mmd_test(
 
 \item{y}{d-dimenstional smaples from the first distribution}
 
-\item{kernel_function}{A character that must match a known kernel. See details.}
+\item{kernel}{A character that must match a known kernel. See details.}
 
 \item{type}{Which statistic to use. One of 'unbiased' or 'linear'. See
 Gretton et al for details. Default to 'unbiased' if the two vectors are of
 length less than \code{1000} and to 'linear' otherwise.}
 
 \item{null}{How to asses the null distribution. This can only be set to exact
-if the \code{type} is 'unbiased' and the \code{kernel_function} is 'rbf'.}
+if the \code{type} is 'unbiased' and the \code{kernel} is 'rbf'.}
 
 \item{iterations}{How many iterations to do to simulate the null distribution.
 Default to 10^4. Only used if \code{null} is 'permutations'}
 
-\item{frac}{For the linear statistic, how many points to sample.}
+\item{frac}{For the linear statistic, how many points to sample. See details.}
 
 \item{...}{Further arguments passed to kernel functions}
 }
@@ -52,19 +52,13 @@ from Gretton et al. The code relies on the pairwise_kernel function from the
 python module sklearn. To list the available kernels, see the examples.
 }
 \examples{
-if (reticulate::py_module_available("sklearn")) {
-  x <- matrix(rnorm(1000, 0, 1), ncol = 10)
-  y <- matrix(rnorm(1000, 0, 2), ncol = 10)
-  mmd_test(x, y)
-  mmd_test(x, y, type = "linear")
-  x <- matrix(rnorm(1000, 0, 1), ncol = 10)
-  y <- matrix(rnorm(1000, 0, 1), ncol = 10)
-  mmd_test(x, y)
-}
-\dontrun{
- sklrn <- reticulate::import("sklearn.metrics")
- print(sklrn$pairwise$PAIRWISE_KERNEL_FUNCTIONS)
-}
+x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+y <- matrix(rnorm(1000, 0, 2), ncol = 10)
+mmd_test(x, y)
+mmd_test(x, y, type = "linear")
+x <- matrix(rnorm(1000, 0, 1), ncol = 10)
+y <- matrix(rnorm(1000, 0, 1), ncol = 10)
+mmd_test(x, y)
 }
 \references{
 Gretton, A., Borgwardt, K., Rasch, M. J., Schölkopf, B., & Smola, A. (2012).

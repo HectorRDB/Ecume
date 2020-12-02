@@ -2,14 +2,14 @@ library(testthat)
 
 test_that("stouffer_Z_score works with all inputs",{
   set.seed(90)
-  pvals <- runif(100, 0, 1)
-  weights <- runif(100, 0, 1)
+  pvals <- stats::runif(100, 0, 1)
+  weights <- stats::runif(100, 0, 1)
   expect_is(stouffer_zscore(pvals, weights), "list")
   expect_equal(stouffer_zscore(pvals, weights, side = 'right'),
                stouffer_zscore(1 - pvals, weights, side = 'left'))
   expect_equal(stouffer_zscore(1 - pvals, weights, side = 'right'),
                stouffer_zscore(pvals, weights, side = 'left'))
-  pval <- runif(1, 0, 1)
+  pval <- stats::runif(1, 0, 1)
   combi <- stouffer_zscore(pval, side = 'right')
   expect_equal(pval, combi$p.value)
   pvals <- rep(pval, 100)

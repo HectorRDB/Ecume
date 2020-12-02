@@ -26,7 +26,7 @@
 #'   \item *p.value* the p-value of the test.
 #' }
 #' @export
-#'
+#' @importFrom stats qnorm pnorm
 stouffer_zscore <- function(pvals, weights = rep(1, seq_along(pvals)),
                             side = "two") {
   if(length(pvals) != length(weights)) {
