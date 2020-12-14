@@ -32,15 +32,19 @@ compute_null_distribution_u <- function(K, m, n, iterations = 10000) {
   l <- min(round(sqrt(frac * m)), round(sqrt(frac * n)))
   idx <- sample(m, 2 * l)
   x1 <- x[idx[seq_len(l)], ]
+  x1 <- as.matrix(x1)
   norms_x1 <- rowSums(x1^2)
   x2 <- x[idx[seq(l + 1, 2 * l)], ]
+  x2 <- as.matrix(x2)
   norms_x2 <- rowSums(x2^2)
   # Sample for Y
   l <- round(sqrt(frac * n))
   idy <- sample(n, 2 * l)
   y1 <- y[idy[seq_len(l)], ]
+  y1 <- as.matrix(y1)
   norms_y1 <- rowSums(y1^2)
   y2 <- y[idx[seq(l + 1, 2 * l)], ]
+  y2 <- as.matrix(y2)
   norms_y2 <- rowSums(y2^2)
   # Kernels
   Kx <- kernlab::kernelFast(kernel, x1, x2, norms_x1) %>% as.vector()

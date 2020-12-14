@@ -131,9 +131,12 @@ ks_test <-  function (x, y, thresh = .05, w_x = rep(1, length(x)),
       return(.pKS2(x = x, tol = tol))
     }
   }
-  PVAL <- 1 - pkstwo(sqrt(w) * STATISTIC)
+  if (STATISTIC == 0) {
+    PVAL <- 1
+  } else {
+    PVAL <- min(1, max(2.2e-16, 1 - pkstwo(sqrt(w) * STATISTIC)))
+  }
 
-  PVAL <- min(1, max(2.2e-16, PVAL))
   METHOD <- paste0("Two-sample Weighted Kolmogorov-Smirnov test with threshold ", thresh)
   RVAL <- list(statistic = STATISTIC, p.value = PVAL, alternative = "two-sided",
                method = METHOD, data.name = DNAME)
