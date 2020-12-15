@@ -26,6 +26,7 @@ jobs:
       matrix:
         config:
           - { os: macOS-latest, r: 'devel', bioc: 'devel'}
+          - { os: ubuntu-20.04, r: 'devel', bioc: 'devel', cran: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - { os: ubuntu-latest, r: 'devel', image: 'bioconductor/bioconductor_docker:devel'}
           - { os: ubuntu-latest, r: 'release', image: 'bioconductor/bioconductor_docker:RELEASE_3_12'}
 
@@ -67,17 +68,16 @@ jobs:
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+          Rscript -e "remotes::install_github('r-hub/sysreqs')"
+          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo -s eval "$sysreqs"
 
       - name: Install dependencies
         run: |
-          local_deps <- remotes::local_package_deps(dependencies = TRUE)
-          deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
-          BiocManager::install(local_deps[local_deps %in% deps$package[deps$diff != 0]], Ncpu = 2L)
-          remotes::install_cran('rcmdcheck', Ncpu = 2L)
+          dependencies <- remotes::local_package_deps(dependencies = TRUE)
+          leftovers <- setdiff(dependencies, installed.packages())
+          BiocManager::install(leftovers, ask = FALSE, Ncpu = 2L)
+          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
       - name: Check
