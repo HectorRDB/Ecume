@@ -53,7 +53,7 @@ jobs:
 
       - name: Install remotes
         run: |
-          install.packages('remotes')
+          install.packages(c('remotes', 'qpdf'))
         shell: Rscript {0}
 
       - name: Set BiocManager version

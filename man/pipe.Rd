@@ -13,6 +13,6 @@ The pipe
 See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
 \examples{
-2 \%>\% seq_len
+2 \%>\% seq_len()
 }
 \keyword{internal}
