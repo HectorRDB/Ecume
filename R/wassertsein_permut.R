@@ -6,11 +6,11 @@
 #' @param y Samples from the second distribution. Only used if x is a vector.
 #' @param iterations How many iterations to do to simulate the null distribution.
 #' Default to 10^4.
-#' @param fast If true, uses the \link[transport]{ubwasserstein}
+#' @param fast If true, uses the \link[transport]{subwasserstein}
 #' approximate function. Default to true if there are more than 1,000 samples
 #' total.
 #' @param S Number of samples to use in approximate mode. Must be set if `fast=TRUE`.
-#' See \link[transport]{ubwasserstein}.
+#' See \link[transport]{subwasserstein}.
 #' @param ... Other parameters passed to \link[transport]{wasserstein} or
 #' \link[transport]{wasserstein1d}
 #' @examples

@@ -21,12 +21,12 @@ wasserstein_permut(
 \item{iterations}{How many iterations to do to simulate the null distribution.
 Default to 10^4.}
 
-\item{fast}{If true, uses the \link[transport]{ubwasserstein}
+\item{fast}{If true, uses the \link[transport]{subwasserstein}
 approximate function. Default to true if there are more than 1,000 samples
 total.}
 
 \item{S}{Number of samples to use in approximate mode. Must be set if \code{fast=TRUE}.
-See \link[transport]{ubwasserstein}.}
+See \link[transport]{subwasserstein}.}
 
 \item{...}{Other parameters passed to \link[transport]{wasserstein} or
 \link[transport]{wasserstein1d}}
