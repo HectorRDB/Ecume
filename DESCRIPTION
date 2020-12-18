@@ -22,7 +22,8 @@ Imports:
     e1071,
     methods,
     pbapply,
-    kernlab
+    kernlab,
+    transport
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
