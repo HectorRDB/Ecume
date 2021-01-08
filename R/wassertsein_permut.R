@@ -41,23 +41,32 @@ wasserstein_permut <- function(x, y, iterations = 10^4,
   nx <- nrow(x)
   ny <- nrow(y)
   X <- rbind(x, y)
+  args <- list("a" = NULL, "b" = NULL, ...)
   if (d == 1) {
     dist_func <- transport::wasserstein1d
+    trans <- identity
+    fast <- FALSE
   } else {
     dist_func <- transport::wasserstein
+    trans <- transport::pp
   }
   if (fast) {
     dist_func <- transport::subwasserstein
+    args <- list("source" = NULL, "target" = NULL, ...)
+    trans <- transport::pp
+    args$S <- S
   }
   if (fast & !(is.numeric(S) && S > 0)) {
     stop("If fast mode is chosen, the S argument must be specified.")
   }
-  og <- dist_func(transport::pp(x), transport::pp(y), S = S, ...)
+  args[[1]] <- trans(x); args[[2]] <- trans(y)
+  og <- do.call(dist_func, args)
   null <- pbapply::pblapply(rep(0, iterations), function(rep) {
     permut <- sample(nx + ny)
     new_x <- X[permut[seq_len(nx)], ]
     new_y <- X[permut[seq(nx + 1, nx + ny)], ]
-    return(dist_func(transport::pp(new_x), transport::pp(new_y), S = S, ...))
+    args[[1]] <- trans(new_x); args[[2]] <- trans(new_y)
+    return(do.call(dist_func, args))
   }) %>% unlist()
   pval <- max(1 / iterations, mean(og <= null))
   return(list("statistic" = og, "p.value" = pval))

@@ -1,6 +1,6 @@
 library(testthat)
 
-test_that("the wasserstein permutation test works with all inputs",{
+test_that("the wasserstein permutation test works",{
   set.seed(08)
   x <- matrix(c(stats::runif(20, 0, 1),
                 stats::runif(20, -1, 1)),
@@ -15,4 +15,12 @@ test_that("the wasserstein permutation test works with all inputs",{
   expect_is(test_fast, "list")
   expect_true(test_fast$statistic > 0)
   expect_error(wasserstein_permut(x, y, fast = TRUE))
+  x <- matrix(c(stats::runif(20, 0, 1),
+                stats::runif(20, -1, 1)),
+              ncol = 1)
+  y <- matrix(c(stats::runif(20, 0, 1),
+                stats::runif(20, -1, 1)),
+              ncol = 1)
+  expect_is(wasserstein_permut(x, y), "list")
+  expect_is(wasserstein_permut(x, y, fast = TRUE, S = 10), "list")
 })
