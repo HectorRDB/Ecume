@@ -144,7 +144,7 @@ mmd_test <- function(x, y, kernel = 'rbfdot',
     K <- .full_kernel(x, y, norms, kernel, ...)
     statistic <- MMD2u(K, m, n)
     if (null == "permutation") {
-      nulls <- compute_null_distribution_u(K, m, n ,iterations = iterations)
+      nulls <- compute_null_distribution_u(K, m, n, iterations = iterations)
       p.value <- max(1 / iterations, mean(nulls > statistic))
     }
   }
