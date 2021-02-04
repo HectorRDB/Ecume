@@ -43,7 +43,7 @@
 #'   \item *p.value* the p-value of the test.
 #' }
 #' @export
-#' @importFrom dplyr bind_rows n_distinct
+#' @importFrom dplyr bind_rows n_distinct group_by sample_n ungroup
 #' @importFrom methods is
 #' @import caret e1071
 #' @importFrom stats pbinom
@@ -66,6 +66,11 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
     )
     X$type <- as.factor(X$type)
   }
+  min_size <- min(table(X$type))
+  X <- X %>%
+    dplyr::group_by(type) %>%
+    dplyr::slice_sample(n = min_size) %>%
+    dplyr::ungroup()
   training_set <- createDataPartition(X$type, p = split)
   ref <- caret::train(type ~ .,
                       data = X[training_set$Resample1, ],
@@ -74,8 +79,7 @@ classifier_test <- function(x, y, split = .7, thresh = 0,
                       trControl = control,
                       ...)
   test_res <- caret::predict.train(ref, newdata = X[-training_set$Resample1, ])
-  accuracy <- sum(test_res == X[-training_set$Resample1, "type"])
-  p_hat <- mean(test_res == X[-training_set$Resample1, "type"]) - thresh
+  p_hat <- mean(test_res == X[-training_set$Resample1, ]$type) - thresh
   min_accuracy <- max(table(X$type)) / nrow(X)
   pval <- stats::pbinom(p_hat * length(test_res),
                         size = length(test_res),
