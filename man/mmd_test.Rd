@@ -2,7 +2,7 @@
 % Please edit documentation in R/mmd_test.R
 \name{mmd_test}
 \alias{mmd_test}
-\title{Perform the Maximum Mean Discrepancy unbiased boostrap test}
+\title{Perform the Maximum Mean Discrepancy unbiased bootstrap test}
 \usage{
 mmd_test(
   x,
@@ -16,9 +16,9 @@ mmd_test(
 )
 }
 \arguments{
-\item{x}{d-dimenstional smaples from the first distribution}
+\item{x}{d-dimensional samples from the first distribution}
 
-\item{y}{d-dimenstional smaples from the first distribution}
+\item{y}{d-dimensional samples from the first distribution}
 
 \item{kernel}{A character that must match a known kernel. See details.}
 

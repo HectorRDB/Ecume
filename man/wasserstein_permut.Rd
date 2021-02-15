@@ -2,7 +2,7 @@
 % Please edit documentation in R/wassertsein_permut.R
 \name{wasserstein_permut}
 \alias{wasserstein_permut}
-\title{Permutation test based on wasserstein distance}
+\title{Permutation test based on Wasserstein distance}
 \usage{
 wasserstein_permut(
   x,
@@ -34,7 +34,7 @@ See \link[transport]{subwasserstein}.}
 \value{
 A list containing the following components:
 \itemize{
-\item \emph{statistic} the bwasserstein distance between x and y.
+\item \emph{statistic} the Wasserstein distance between x and y.
 \item \emph{p.value} the p-value of the permutation test.
 }
 }
@@ -48,5 +48,7 @@ Permutation test based on Wasserstein distance
  y <- matrix(c(runif(100, 0, 3),
                runif(100, -1, 1)),
              ncol = 2)
- wasserstein_permut(x, y, iterations = 10^3)
+ # Set iterations to small number for runtime
+ # Increase for more accurate results
+ wasserstein_permut(x, y, iterations = 10^2)
 }

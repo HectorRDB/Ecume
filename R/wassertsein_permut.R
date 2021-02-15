@@ -1,4 +1,4 @@
-#' Permutation test based on wasserstein distance
+#' Permutation test based on Wasserstein distance
 #'
 #' @description Permutation test based on Wasserstein distance
 #'
@@ -27,7 +27,7 @@
 #' @return
 #' A list containing the following components:
 #' \itemize{
-#'   \item *statistic* the bwasserstein distance between x and y.
+#'   \item *statistic* the Wasserstein distance between x and y.
 #'   \item *p.value* the p-value of the permutation test.
 #' }
 #' @export

@@ -79,12 +79,12 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
   return(unlist(mmdl_null))
 }
 
-#' Perform the Maximum Mean Discrepancy unbiased boostrap test
+#' Perform the Maximum Mean Discrepancy unbiased bootstrap test
 #'
 #' @description Maximum Mean Discrepancy Unbiased Test
 #'
-#' @param x d-dimenstional smaples from the first distribution
-#' @param y d-dimenstional smaples from the first distribution
+#' @param x d-dimensional samples from the first distribution
+#' @param y d-dimensional samples from the first distribution
 #' @param kernel A character that must match a known kernel. See details.
 #' @param type Which statistic to use. One of 'unbiased' or 'linear'. See
 #' Gretton et al for details. Default to 'unbiased' if the two vectors are of
