@@ -20,7 +20,9 @@
 #'  y <- matrix(c(runif(100, 0, 3),
 #'                runif(100, -1, 1)),
 #'              ncol = 2)
-#'  wasserstein_permut(x, y, iterations = 10^3)
+#'  # Set iterations to small number for runtime
+#'  # Increase for more accurate results
+#'  wasserstein_permut(x, y, iterations = 10^2)
 #' @md
 #' @return
 #' A list containing the following components:
