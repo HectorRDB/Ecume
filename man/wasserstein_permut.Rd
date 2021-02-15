@@ -48,5 +48,5 @@ Permutation test based on Wasserstein distance
  y <- matrix(c(runif(100, 0, 3),
                runif(100, -1, 1)),
              ncol = 2)
- wasserstein_permut(x, y)
+ wasserstein_permut(x, y, iterations = 10^3)
 }

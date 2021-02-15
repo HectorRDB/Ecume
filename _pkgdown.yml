@@ -1,0 +1,15 @@
+url: http://hectorrdb.github.io//Ecume
+
+template:
+  params:
+    bootswatch: flatly
+
+home:
+  title: "Ecume: Equality of 2 (or k) Continuous Univariate and Multivariate Distributions"
+  type: inverse
+
+
+navbar:
+  right:
+   - icon: fa-github
+     href: https://github.com/HectorRDB/Ecume
