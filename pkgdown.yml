@@ -3,7 +3,7 @@ pkgdown: 1.6.1.9000
 pkgdown_sha: 1c28ef9d9476e35974e1933de76a9aaa24d4cd27
 articles:
   Ecume: Ecume.html
-last_built: 2021-02-16T07:09Z
+last_built: 2021-02-16T19:40Z
 urls:
   reference: http://hectorrdb.github.io//Ecume/reference
   article: http://hectorrdb.github.io//Ecume/articles

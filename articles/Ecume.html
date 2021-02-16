@@ -97,6 +97,11 @@
 <p>The Kolmogorov-Smirnov statistic for two samples relies on the empirical cumulative distributions <span class="math inline">\(F_x\)</span> and <span class="math inline">\(F_y\)</span> for <strong>univariate</strong> distributions and is computed as</p>
 <p><span class="math display">\[D_{n,m}=\sup _{x\in\{x_i, y_j\},i\in[1,\ldots m], j\in[1,\ldots n]}|F_x(x)-F_y(x)|\]</span></p>
 <p>We can compute the distribution of <span class="math inline">\(D_{n,m}\)</span> under the null and device a test. If the distributions are identical we expect to not reject the null about 95% of the time, for a nominal level of <span class="math inline">\(.05\)</span>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##  Two-sample Kolmogorov-Smirnov test
 ## 
@@ -104,6 +109,11 @@
 ## D = 0.095, p-value = 0.5842
 ## alternative hypothesis: two-sided</code></pre>
 <p>However, if the distributions are not identical, we see that we would reject the null hypothesis.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##  Two-sample Kolmogorov-Smirnov test
 ## 
@@ -115,12 +125,27 @@
 <h2 class="hasAnchor">
 <a href="#adding-observation-weights-and-threshold" class="anchor"></a>Adding observation weights and threshold</h2>
 <p>Now, let us imagine we also have observations weights <span class="math inline">\(w_{x, i}\)</span> and <span class="math inline">\(w_{y, j}\)</span> for all samples. Moreover, instead of testing <span class="math inline">\(H_0:D_{m,n} =0\)</span>, we want to test against an effect size, i.e. <span class="math inline">\(H_0:D_{m,n} \leq c\)</span>. Relying on <span class="citation">(Monahan 2011)</span>, we can do this using the <code>ks_test</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">Ecume</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">w_x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">w_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="../reference/ks_test.html">ks_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, w_x <span class="op">=</span> <span class="va">w_x</span>, w_y <span class="op">=</span> <span class="va">w_y</span>, thresh <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##  Two-sample Weighted Kolmogorov-Smirnov test with threshold 0.01
 ## 
 ## data:  x and y
 ## = 0.09097, p-value = 0.8142
 ## alternative hypothesis: two-sided</code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">w_x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="va">w_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="../reference/ks_test.html">ks_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, w_x <span class="op">=</span> <span class="va">w_x</span>, w_y <span class="op">=</span> <span class="va">w_y</span>, thresh <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##  Two-sample Weighted Kolmogorov-Smirnov test with threshold 0.01
 ## 
@@ -140,12 +165,30 @@
 <p>The two-sample kernel test relies on a kernel function <span class="math inline">\((x, y)\rightarrow k(x, y)\)</span> and the Mean Maximum Discrepancy:</p>
 <p><span class="math display">\[MMD^2_u = \frac{1}{m(m-1)}\sum_{x\neq x'}k(x, x') + \frac{1}{n(n-1)}\sum_{y\neq y'}k(y, y') - \frac{2}{mn}\sum_{x, y}k(x, y)\]</span></p>
 <p>While this statistic has some closed-form bounds under the null for some kernels, we can also compute its distribution using permutations</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="../reference/mmd_test.html">mmd_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, iterations <span class="op">=</span> <span class="fl">10</span><span class="op">^</span><span class="fl">4</span><span class="op">)</span></code></pre></div>
 <pre><code>## $statistic
 ## [1] 0.03135917
 ## 
 ## $p.value
 ## [1] 1e-04</code></pre>
 <p>If the number of samples is too large, we can use a “linear” form of the statistics that samples elements from the sums above.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="../reference/mmd_test.html">mmd_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, iterations <span class="op">=</span> <span class="fl">10</span><span class="op">^</span><span class="fl">4</span>, type <span class="op">=</span> <span class="st">"linear"</span><span class="op">)</span></code></pre></div>
 <pre><code>## $statistic
 ## [1] 0.2239044
 ## 
@@ -158,6 +201,15 @@
 <p>If we split the data into a training and test set and train a classifier <span class="math inline">\(Cl\)</span> on the training set to distinguish between points from <span class="math inline">\(P_1\)</span> and <span class="math inline">\(P_2\)</span>, then under the null, the classifier will not do better than chance on the test set. So if we have <span class="math inline">\(n_{test}\)</span> samples in the test set, then the number of correctly classified points <span class="math inline">\(c_{Cl, n_{test}}\)</span> follows</p>
 <p><span class="math display">\[ c_{Cl, n_{test}}\sim_{H_0} Binom(.5, n_{test})\]</span></p>
 <p>This provides a valid test statistic and its distribution under the null. The quality of the classifier only matters for the power of the test. To provide flexibility for the users, we rely on the <code>caret</code> package <span class="citation">(Kuhn 2020)</span>. By default, we use a <span class="math inline">\(k\)</span>-NN classifier where <span class="math inline">\(k\)</span> is selected through cross-validation on the training set.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="../reference/classifier_test.html">classifier_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span></code></pre></div>
 <pre><code>## $statistic
 ## [1] 0.6583333
 ## 
@@ -172,6 +224,18 @@
 <p><span class="math display">\[H_0:\forall (i,j)\in[1\ldots k], P_i=P_j\]</span></p>
 <p>The classifier test can be readily extended to more than two distributions. The main difference is that, under the null,</p>
 <p><span class="math display">\[ c_{Cl, n_{test}}\sim_{H_0} Binom(\frac{1}{k}, n_{test})\]</span></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
+              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,
+               <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+            ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="../reference/classifier_test.html">classifier_test</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"x1"</span> <span class="op">=</span> <span class="va">x1</span>, <span class="st">"x2"</span> <span class="op">=</span> <span class="va">x2</span>, <span class="st">"x3"</span> <span class="op">=</span> <span class="va">x3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## $statistic
 ## [1] 0.4333333
 ## 
