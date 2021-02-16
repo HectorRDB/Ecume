@@ -17,7 +17,7 @@ vignette: >
 library(knitr)
 opts_chunk$set(
   fig.pos = "!h", out.extra = "", warning = FALSE, message = FALSE, 
-  fig.align = "center", echo = FALSE
+  fig.align = "center"
 )
 library(stats)
 ```
