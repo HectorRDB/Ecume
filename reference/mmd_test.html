@@ -6,14 +6,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform the Maximum Mean Discrepancy unbiased boostrap test — mmd_test • Ecume</title>
+<title>Perform the Maximum Mean Discrepancy unbiased bootstrap test — mmd_test • Ecume</title>
 
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Perform the Maximum Mean Discrepancy unbiased boostrap test — mmd_test" />
+<meta property="og:title" content="Perform the Maximum Mean Discrepancy unbiased bootstrap test — mmd_test" />
 <meta property="og:description" content="Maximum Mean Discrepancy Unbiased Test" />
+
+
 
 
 
@@ -56,9 +58,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,11 +87,19 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../articles/Ecume.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/HectorRDB/Ecume">
+    <span class="fas fa-github"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -97,7 +113,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform the Maximum Mean Discrepancy unbiased boostrap test</h1>
+    <h1>Perform the Maximum Mean Discrepancy unbiased bootstrap test</h1>
     
     <div class="hidden name"><code>mmd_test.Rd</code></div>
     </div>
@@ -109,11 +125,11 @@
     <pre class="usage"><span class='fu'>mmd_test</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>y</span>,
-  kernel_function <span class='op'>=</span> <span class='st'>"rbf"</span>,
+  kernel <span class='op'>=</span> <span class='st'>"rbfdot"</span>,
   type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1000</span>, <span class='st'>"unbiased"</span>, <span class='st'>"linear"</span><span class='op'>)</span>,
   null <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"permutation"</span>, <span class='st'>"exact"</span><span class='op'>)</span>,
   iterations <span class='op'>=</span> <span class='fl'>10</span><span class='op'>^</span><span class='fl'>3</span>,
-  frac <span class='op'>=</span> <span class='fl'>0.1</span>,
+  frac <span class='op'>=</span> <span class='fl'>1</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -122,14 +138,14 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>d-dimenstional smaples from the first distribution</p></td>
+      <td><p>d-dimensional samples from the first distribution</p></td>
     </tr>
     <tr>
       <th>y</th>
-      <td><p>d-dimenstional smaples from the first distribution</p></td>
+      <td><p>d-dimensional samples from the first distribution</p></td>
     </tr>
     <tr>
-      <th>kernel_function</th>
+      <th>kernel</th>
       <td><p>A character that must match a known kernel. See details.</p></td>
     </tr>
     <tr>
@@ -141,7 +157,7 @@ length less than <code>1000</code> and to 'linear' otherwise.</p></td>
     <tr>
       <th>null</th>
       <td><p>How to asses the null distribution. This can only be set to exact
-if the <code>type</code> is 'unbiased' and the <code>kernel_function</code> is 'rbf'.</p></td>
+if the <code>type</code> is 'unbiased' and the <code>kernel</code> is 'rbf'.</p></td>
     </tr>
     <tr>
       <th>iterations</th>
@@ -150,7 +166,7 @@ Default to 10^4. Only used if <code>null</code> is 'permutations'</p></td>
     </tr>
     <tr>
       <th>frac</th>
-      <td><p>For the linear statistic, how many points to sample.</p></td>
+      <td><p>For the linear statistic, how many points to sample. See details.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -176,20 +192,31 @@ python module sklearn. To list the available kernels, see the examples.</p>
 <em>A Kernel Two-Sample Test</em> Journal of Machine Learning Research (2012)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'>reticulate</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/py_module_available.html'>py_module_available</a></span><span class='op'>(</span><span class='st'>"sklearn"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
-  <span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, type <span class='op'>=</span> <span class='st'>"linear"</span><span class='op'>)</span>
-  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
-<span class='op'>}</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
- <span class='va'>sklrn</span> <span class='op'>&lt;-</span> <span class='fu'>reticulate</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/import.html'>import</a></span><span class='op'>(</span><span class='st'>"sklearn.metrics"</span><span class='op'>)</span>
- <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>sklrn</span><span class='op'>$</span><span class='va'>pairwise</span><span class='op'>$</span><span class='va'>PAIRWISE_KERNEL_FUNCTIONS</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $statistic
+#&gt; [1] 0.0002247507
+#&gt; 
+#&gt; $p.value
+#&gt; [1] 0.001
+#&gt; </div><div class='input'><span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, type <span class='op'>=</span> <span class='st'>"linear"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $statistic
+#&gt; [1] -0.001957033
+#&gt; 
+#&gt; $p.value
+#&gt; [1] 0.569
+#&gt; </div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+ <span class='co'># Set iterations to small number for runtime</span>
+ <span class='co'># Increase for more accurate results</span>
+<span class='fu'>mmd_test</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, iterations <span class='op'>=</span> <span class='fl'>10</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $statistic
+#&gt; [1] -8.727474e-06
+#&gt; 
+#&gt; $p.value
+#&gt; [1] 0.53
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -213,6 +240,8 @@ python module sklearn. To list the available kernels, see the examples.</p>
 
   
 
+
+  
 
   </body>
 </html>

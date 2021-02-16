@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/index.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/classifier_test.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/ks_test.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/mmd_test.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/stouffer_zscore.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/reference/wasserstein_permut.html</loc>
+  </url>
+  <url>
+    <loc>http://hectorrdb.github.io//Ecume/articles/Ecume.html</loc>
+  </url>
+</urlset>
