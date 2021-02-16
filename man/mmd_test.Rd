@@ -58,7 +58,9 @@ mmd_test(x, y)
 mmd_test(x, y, type = "linear")
 x <- matrix(rnorm(1000, 0, 1), ncol = 10)
 y <- matrix(rnorm(1000, 0, 1), ncol = 10)
-mmd_test(x, y)
+ # Set iterations to small number for runtime
+ # Increase for more accurate results
+mmd_test(x, y, iterations = 10^2)
 }
 \references{
 Gretton, A., Borgwardt, K., Rasch, M. J., Schölkopf, B., & Smola, A. (2012).

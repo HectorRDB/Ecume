@@ -102,7 +102,9 @@ compute_null_distribution_l <- function(sample_Ks, iterations = 10000) {
 #' mmd_test(x, y, type = "linear")
 #' x <- matrix(rnorm(1000, 0, 1), ncol = 10)
 #' y <- matrix(rnorm(1000, 0, 1), ncol = 10)
-#' mmd_test(x, y)
+#'  # Set iterations to small number for runtime
+#'  # Increase for more accurate results
+#' mmd_test(x, y, iterations = 10^2)
 #' @details
 #' This computes the MMD^2u unbiased statistic or the MMDl linear statistic
 #' from Gretton et al. The code relies on the pairwise_kernel function from the
