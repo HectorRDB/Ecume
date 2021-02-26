@@ -82,7 +82,15 @@
 BiocManager::install("Ecume")</code></pre>
 <p>To install the development version in <code>R</code>, run</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"HectoRDB/Ecume"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+ <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span> 
+<span class="op">}</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"HectoRDB/Ecume"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#usage" class="anchor"></a>Usage</h2>
+<p>The <em>Ecume</em> package has been developed as part of the <a href="https://hectorrdb.github.io/condiments" class="external-link"><em>condiments</em></a> paper but it was spawned as a separate package since it use can be broader than scRNA-Seq data analysis. The <a href="https://hectorrdb.github.io/Ecume/articles/Ecume.html" class="external-link">online vignette</a> is a good place to get started.</p>
 </div>
 </div>
 
@@ -116,6 +124,7 @@ BiocManager::install("Ecume")</code></pre>
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=Ecume" class="external-link"><img src="https://www.r-pkg.org/badges/version/Ecume" alt="CRAN"></a></li>
 <li><a href="https://github.com/HectorRDB/Ecume/actions" class="external-link"><img src="https://github.com/HectorRDB/Ecume/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://codecov.io/gh/HectorRDB/Ecume?branch=main" class="external-link"><img src="https://codecov.io/gh/HectorRDB/Ecume/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
@@ -126,11 +135,13 @@ BiocManager::install("Ecume")</code></pre>
 
 
       <footer><div class="copyright">
-  <p>Developed by Hector Roux de Bezieux.</p>
+  <p></p>
+<p>Developed by Hector Roux de Bezieux.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
