@@ -1,3 +1,7 @@
+# New version
+
+Version 0.9.1: The package was updated after changes to the spatstat package.
+
 # Package Creation
 
 Version 0.9.0: Created the pre-release version of the package with several functionalities. Website with vignette and help is available at https://hectorrdb.github.io/Ecume/

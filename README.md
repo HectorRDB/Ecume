@@ -32,4 +32,4 @@ devtools::install_github("HectoRDB/Ecume")
 ```
 ## Usage 
 
-The *Ecume* package has been developed as part of the [*condiments*](https://hectorrdb.github.io/condiments) paper but it was spawned as a separate package since it use can be broader than scRNA-Seq data analysis. The [online vignette](https://hectorrdb.github.io/Ecume/articles/Ecume.html) is a good place to get started.
+The *Ecume* package has been developed as part of the [*condiments*](https://hectorrdb.github.io/condiments/) paper but it was spawned as a separate package since it use can be broader than scRNA-Seq data analysis. The [online vignette](https://hectorrdb.github.io/Ecume/articles/Ecume.html) is a good place to get started.
