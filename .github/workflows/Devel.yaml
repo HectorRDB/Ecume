@@ -78,7 +78,6 @@ jobs:
           leftovers <- setdiff(dependencies, installed.packages())
           BiocManager::install(leftovers, ask = FALSE, Ncpu = 2L)
           remotes::install_cran("rcmdcheck")
-          install.packages("spatstat", repos = "https://spatstat.r-universe.dev")
         shell: Rscript {0}
 
       - name: Check
