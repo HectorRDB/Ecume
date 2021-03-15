@@ -15,7 +15,7 @@ biocViews:
     Infrastructure
 Imports: 
     stats,
-    spatstat.geom, spatstat (>= 2.0-0),
+    spatstat.geom,
     magrittr,
     caret,
     dplyr,
