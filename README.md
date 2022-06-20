@@ -2,6 +2,7 @@
 [![CRAN](https://www.r-pkg.org/badges/version/Ecume)](https://cran.r-project.org/package=Ecume)
 [![R build status](https://github.com/HectorRDB/Ecume/workflows/R-CMD-check/badge.svg)](https://github.com/HectorRDB/Ecume/actions)
 [![Codecov test coverage](https://codecov.io/gh/HectorRDB/Ecume/branch/main/graph/badge.svg)](https://codecov.io/gh/HectorRDB/Ecume?branch=main)
+[![](https://cranlogs.r-pkg.org/badges/Ecume)](https://cran.r-project.org/package=Ecume)
 <!-- badges: end -->
   
 # R package: Ecume
