@@ -8,7 +8,7 @@
 # R package: Ecume
 
   
-This package implemements (or re-implements in `R`) a variety of statistical tools used to do non-parametric two-sample (or k-sample) distribution comparisons in the univariate or multivariate case.
+This package implements (or re-implements in `R`) a variety of statistical tools used to do non-parametric two-sample (or k-sample) distribution comparisons in the univariate or multivariate case.
 
 If you want to suggest a new test or a variant, open an [issue](https://github.com/HectorRDB/Ecume/issues).
 

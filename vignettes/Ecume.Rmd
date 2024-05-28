@@ -79,7 +79,7 @@ w_y <- runif(200, 0, 1)
 ks_test(x = x, y = y, w_x = w_x, w_y = w_y, thresh = .01)
 ```
 
-# Mutivariate Distributions
+# Multivariate Distributions
 
 However, the KS test does not work with multivariate distributions. Other statistics have been proposed. Here, we have implemented two
 
